@@ -2,6 +2,7 @@
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.Keys;
+
+import java.time.Duration;
 import java.util.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,6 +35,7 @@ public class SubscribeTest {
     driver = new ChromeDriver();
     js = (JavascriptExecutor) driver;
     vars = new HashMap<String, Object>();
+    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
   }
   @AfterEach
   public void tearDown() {
@@ -40,11 +44,41 @@ public class SubscribeTest {
   @Test
   public void subscribe() {
     driver.get("https://mail.ru/");
+    driver.manage().window().setSize(new Dimension(1710, 1100));
+    driver.findElement(By.xpath("//div[@id='ph-whiteline']/div/div[2]/button")).click();
+    WebElement iframe = driver.findElement(By.xpath("//iframe[@class='ag-popup__frame__layout__iframe']"));
+    driver.switchTo().frame(iframe);
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+    wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@name='username']")));
+
+    WebElement usernameInput = driver.findElement(By.xpath("//input[@name='username']"));
+    usernameInput.click();
+    usernameInput.sendKeys("tpo3test");
+
+    // Кнопенция с предложением ввода пароля
+    driver.findElement(By.xpath("//div[@id='root']/div/div/div/div[2]/div/div/form/div[2]/div[2]/div[3]/div/div/div/button/span")).click();
+
+    wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+    wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[2]/div/div/div/div/div/input")));
+
+    //Форма ввода пароля
+    driver.findElement(By.xpath("//div[2]/div/div/div/div/div/input")).sendKeys("mwvNaz7QxQb2uaS");
+
+    // Кнопенция с кнопкой "Войти"
+    driver.findElement(By.xpath("//div[@id='root']/div/div/div/div[2]/div/div/form/div[2]/div/div[3]/div/div/div/div/button/span")).click();
+    driver.switchTo().defaultContent();
+
+    assertTrue(new WebDriverWait(driver, Duration.ofSeconds(10))
+            .until(ExpectedConditions.urlMatches("https://e.mail.ru*")));
+
+    driver.get("https://mail.ru/");
     driver.manage().window().setSize(new Dimension(2576, 1408));
     js.executeScript("window.scrollTo(0,332.6666564941406)");
     driver.findElement(By.xpath("//main[@id=\'grid\']/div[2]/div[3]/div/div[5]/div/div/div/div/div/button[2]")).click();
     js.executeScript("window.scrollTo(0,142.6666717529297)");
-    driver.findElement(By.xpath("//button/span/span[2]")).click();
-    assertThat(driver.findElement(By.xpath("//main[@id=\'grid\']/div[2]/div[3]/div/div[5]/div/div/div[2]/div/div[2]/div/div/div/div[2]/button/span/span[2]")).getText(), is("Вы подписаны"));
+    driver.findElement(By.xpath("//div[@class='pl_a']/div[2]/div/div/div/div[2]/button")).click();
+    //driver.findElement(By.xpath("//button/span/span[2]")).click();
+    // TODO
+    assertThat(driver.findElement(By.xpath("//div[@class='pl_a']/div[2]/div/div/div/div[2]/button")).getText(), is("Вы подписаны"));
   }
 }

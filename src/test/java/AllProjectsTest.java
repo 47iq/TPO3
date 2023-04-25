@@ -55,7 +55,7 @@ public class AllProjectsTest {
     driver.manage().window().setSize(new Dimension(2576, 1408));
     driver.findElement(By.xpath("//div[@id=\'ph-whiteline\']/div/div/div")).click();
     {
-      WebElement element = driver.findElement(By.linkText("ТВ программа"));
+      WebElement element = driver.findElement(By.xpath("//div[@id=\'ph-whiteline\']/div/div[2]/div/section[2]/div/div/div/div[2]/a[7]"));
       Actions builder = new Actions(driver);
       builder.moveToElement(element).perform();
     }

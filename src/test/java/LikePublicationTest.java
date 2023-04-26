@@ -47,16 +47,24 @@ public class LikePublicationTest {
   }
   @Test
   public void likePublication() {
-    driver.get("https://mail.ru/");
-    driver.manage().window().setSize(new Dimension(2576, 1408));
-    WebElement likeButton = driver.findElement(By.xpath("(//button[@aria-label='Мне нравится'])[1]"));
-    WebElement likeCount = likeButton.findElement(By.xpath("span[2]"));
-
-    int likeNum = Integer.parseInt(likeCount.getText());
-    likeButton.click();
-    likeCount = driver.findElement(By.xpath(("(//button[@aria-label='Больше не нравится'])[1]/span[2]")));
-    int likeNumAfter = Integer.parseInt(likeCount.getText());
-
+    boolean foundLessThan1kLikes = false;
+    int retryNum = 5, likeNumAfter = 0, likeNum = 0;
+    while (!foundLessThan1kLikes && retryNum >= 0) {
+      driver.get("https://mail.ru/");
+      driver.manage().window().setSize(new Dimension(2576, 1408));
+      WebElement likeButton = driver.findElement(By.xpath("(//button[@aria-label='Нравится'])[1]"));
+      WebElement likeCount = likeButton.findElement(By.xpath("span"));
+      try {
+        likeNum = Integer.parseInt(likeCount.getText());
+        likeButton.click();
+        likeCount = driver.findElement(By.xpath(("(//button[@aria-label='Нравится'])[1]/span")));
+        likeNumAfter = Integer.parseInt(likeCount.getText());
+        foundLessThan1kLikes = true;
+      } catch (NumberFormatException e) {
+        retryNum--;
+        continue;
+      }
+    }
     Assertions.assertEquals(likeNumAfter, likeNum + 1);
   }
 }

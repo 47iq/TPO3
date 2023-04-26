@@ -9,6 +9,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.time.Duration;
@@ -21,12 +22,24 @@ public class TestSearchFormTest {
 
   @BeforeAll
   public static void setup() {
-    WebDriverManager.chromedriver().setup();
+    String value_name = System.getenv("DRIVER");
+    if (value_name.equals("firefox")) {
+      WebDriverManager.firefoxdriver().setup();
+    } else {
+      WebDriverManager.chromedriver().setup();
+    }
   }
 
   @BeforeEach
   public void setUp() {
-    driver = new FirefoxDriver();
+    String value_name = System.getenv("DRIVER");
+
+    if (value_name.equals("firefox")) {
+      driver = new FirefoxDriver();
+    } else {
+      driver = new ChromeDriver();
+    }
+
     js = (JavascriptExecutor) driver;
     vars = new HashMap<String, Object>();
     driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));

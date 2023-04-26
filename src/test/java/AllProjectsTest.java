@@ -34,11 +34,24 @@ public class AllProjectsTest {
 
   @BeforeAll
   public static void setup() {
-    WebDriverManager.chromedriver().setup();
+    String value_name = System.getenv("DRIVER");
+    if (value_name.equals("firefox")) {
+      WebDriverManager.firefoxdriver().setup();
+    } else {
+      WebDriverManager.chromedriver().setup();
+    }
   }
 
   @BeforeEach
   public void setUp() {
+    String value_name = System.getenv("DRIVER");
+
+    if (value_name.equals("firefox")) {
+      driver = new FirefoxDriver();
+    } else {
+      driver = new ChromeDriver();
+    }
+
     driver = new ChromeDriver();
     js = (JavascriptExecutor) driver;
     vars = new HashMap<String, Object>();

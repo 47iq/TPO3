@@ -4,6 +4,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -21,11 +22,23 @@ public class HidePublicationSourceTest {
 
   @BeforeAll
   public static void setup() {
-    WebDriverManager.chromedriver().setup();
+    String value_name = System.getenv("DRIVER");
+    if (value_name.equals("firefox")) {
+      WebDriverManager.firefoxdriver().setup();
+    } else {
+      WebDriverManager.chromedriver().setup();
+    }
   }
   @BeforeEach
   public void setUp() {
-    driver = new ChromeDriver();
+    String value_name = System.getenv("DRIVER");
+
+    if (value_name.equals("firefox")) {
+      driver = new FirefoxDriver();
+    } else {
+      driver = new ChromeDriver();
+    }
+
     js = (JavascriptExecutor) driver;
     vars = new HashMap<String, Object>();
     driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));

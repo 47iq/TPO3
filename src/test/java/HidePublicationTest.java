@@ -22,6 +22,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.Keys;
+
+import java.time.Duration;
 import java.util.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,29 +50,19 @@ public class HidePublicationTest {
   @Test
   public void hidePublication() {
     driver.get("https://mail.ru/");
-    driver.manage().window().setSize(new Dimension(2576, 1408));
-    {
-      WebElement element = driver.findElement(By.cssSelector(".pl_ag:nth-child(1) > .pl_m:nth-child(1) .DocumentCard-dislikeButton-0-1-78 svg"));
-      Actions builder = new Actions(driver);
-      builder.moveToElement(element).perform();
-    }
-    {
-      WebElement element = driver.findElement(By.tagName("body"));
-      Actions builder = new Actions(driver);
-      builder.moveToElement(element, 0, 0).perform();
-    }
-    {
-      WebElement element = driver.findElement(By.cssSelector(".pl_ag:nth-child(1) > .pl_m:nth-child(1) use"));
-      Actions builder = new Actions(driver);
-      builder.moveToElement(element).perform();
-    }
-    {
-      WebElement element = driver.findElement(By.tagName("body"));
-      Actions builder = new Actions(driver);
-      builder.moveToElement(element, 0, 0).perform();
-    }
-    driver.findElement(By.cssSelector(".pl_ag:nth-child(1) > .pl_m:nth-child(1) .DocumentCard-dislikeButton-0-1-78 svg")).click();
-    driver.findElement(By.xpath("//div[4]/div/div[2]/button")).click();
-    assertThat(driver.findElement(By.xpath("//div[5]/div/div/div[2]/div/div/div/div/div")).getText(), is("Эта публикация больше не\\\\nпоявится в вашей ленте"));
+    driver.manage().window().setSize(new Dimension(1376, 1408));
+    List<WebElement> tooltips = driver.findElements(By.xpath("//div[@role='presentation']"));
+    tooltips.get(0).click();
+
+    new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("(//div[@class='pl_ag'])[1]/div/div/button")));
+    WebElement card = driver.findElement(By.xpath("(//div[@class='pl_ag'])[1]/div/div/button"));
+
+    card.click();
+    driver.findElement(By.xpath("(//div[@class='pl_ag'])[1]/div/div/div[4]/div/div[2]/button[1]")).click();
+    driver.findElement(By.xpath("(//div[@class='pl_ag'])[1]/div[1]/div"));
+    new WebDriverWait(driver, Duration.ofSeconds(2))
+            .until(ExpectedConditions.numberOfElementsToBe(
+                    By.xpath("(//div[@class='pl_ag'])[1]/div[1]/div/a"), 0));
+    assertThat(driver.findElement(By.xpath("(//div[@class='pl_ag'])[1]/div[1]/div")).getText(), is("Эта публикация больше не\nпоявится в вашей ленте"));
   }
 }

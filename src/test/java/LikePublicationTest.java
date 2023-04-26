@@ -4,6 +4,8 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -39,9 +41,9 @@ public class LikePublicationTest {
 
     int likeNum = Integer.parseInt(likeCount.getText());
     likeButton.click();
+    likeCount = driver.findElement(By.xpath(("(//button[@aria-label='Больше не нравится'])[1]/span[2]")));
     int likeNumAfter = Integer.parseInt(likeCount.getText());
 
-    vars.put("TEXT", js.executeScript("return Number(arguments[0]) + 1", vars.get("TEXT")));
-    Assertions.assertEquals(likeNumAfter, likeNum);
+    Assertions.assertEquals(likeNumAfter, likeNum + 1);
   }
 }

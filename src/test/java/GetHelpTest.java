@@ -35,7 +35,7 @@ public class GetHelpTest {
   @BeforeAll
   public static void setup() {
     String value_name = System.getenv("DRIVER");
-    if (value_name.equals("firefox")) {
+    if (value_name != null && value_name.equals("firefox")) {
       WebDriverManager.firefoxdriver().setup();
     } else {
       WebDriverManager.chromedriver().setup();
@@ -46,7 +46,7 @@ public class GetHelpTest {
   public void setUp() {
     String value_name = System.getenv("DRIVER");
 
-    if (value_name.equals("firefox")) {
+    if (value_name != null && value_name.equals("firefox")) {
       driver = new FirefoxDriver();
     } else {
       driver = new ChromeDriver();
@@ -73,8 +73,8 @@ public class GetHelpTest {
       Actions builder = new Actions(driver);
       builder.moveToElement(element, 0, 0).perform();
     }
-    driver.findElement(By.cssSelector(".qpcaalj__b2n050 > svg")).click();
-    driver.findElement(By.xpath("//div[2]/a/span")).click();
+    driver.findElement(By.xpath("//div[@class='footer__more imndbej-1ayqugf']")).click();
+    driver.findElement(By.xpath("//div[@class='footer__more imndbej-1ayqugf']/div[2]/a")).click();
 
     assertTrue(new WebDriverWait(driver, Duration.ofSeconds(10))
             .until(ExpectedConditions.urlMatches("https://help.mail.ru*")));

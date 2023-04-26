@@ -58,6 +58,11 @@ public class HidePublicationTest {
     WebElement card = driver.findElement(By.xpath("(//div[@class='pl_ag'])[1]/div/div/button"));
 
     card.click();
+
+    new WebDriverWait(driver, Duration.ofSeconds(2))
+            .until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("(//div[@class='pl_ag'])[1]/div/div/div[4]/div/div[2]/button[1]")));
+
     driver.findElement(By.xpath("(//div[@class='pl_ag'])[1]/div/div/div[4]/div/div[2]/button[1]")).click();
     driver.findElement(By.xpath("(//div[@class='pl_ag'])[1]/div[1]/div"));
     new WebDriverWait(driver, Duration.ofSeconds(2))

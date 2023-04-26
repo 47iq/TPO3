@@ -2,9 +2,12 @@
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -30,6 +33,12 @@ public class SubscribeTest {
   private WebDriver driver;
   private Map<String, Object> vars;
   JavascriptExecutor js;
+
+  @BeforeAll
+  public static void setup() {
+    WebDriverManager.chromedriver().setup();
+  }
+
   @BeforeEach
   public void setUp() {
     driver = new ChromeDriver();
@@ -72,13 +81,20 @@ public class SubscribeTest {
             .until(ExpectedConditions.urlMatches("https://e.mail.ru*")));
 
     driver.get("https://mail.ru/");
-    driver.manage().window().setSize(new Dimension(2576, 1408));
+    driver.manage().window().setSize(new Dimension(1576, 1408));
     js.executeScript("window.scrollTo(0,332.6666564941406)");
     driver.findElement(By.xpath("//main[@id=\'grid\']/div[2]/div[3]/div/div[5]/div/div/div/div/div/button[2]")).click();
     js.executeScript("window.scrollTo(0,142.6666717529297)");
-    driver.findElement(By.xpath("//div[@class='pl_a']/div[2]/div/div/div/div[2]/button")).click();
-    //driver.findElement(By.xpath("//button/span/span[2]")).click();
+    WebElement subscribeButton = driver.findElement(By.xpath("//div[@class='pl_a']/div[2]/div/div/div/div[2]/button"));
+    String expect;
+    new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(subscribeButton));
+    if (Objects.equals(subscribeButton.getText(), "Подписаться")) {
+      expect = "Вы подписаны";
+    } else expect = "Подписаться";
+
+    subscribeButton.click();
+    new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(subscribeButton));
     // TODO
-    assertThat(driver.findElement(By.xpath("//div[@class='pl_a']/div[2]/div/div/div/div[2]/button")).getText(), is("Вы подписаны"));
+    assertEquals(expect, subscribeButton.getText());
   }
 }

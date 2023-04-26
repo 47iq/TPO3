@@ -21,7 +21,7 @@ public class NewsRedirectTest {
     @BeforeAll
     public static void setup() {
         String value_name = System.getenv("DRIVER");
-        if (value_name.equals("firefox")) {
+        if (value_name != null && value_name.equals("firefox")) {
             WebDriverManager.firefoxdriver().setup();
         } else {
             WebDriverManager.chromedriver().setup();
@@ -32,7 +32,7 @@ public class NewsRedirectTest {
     public void setupDriver() {
         String value_name = System.getenv("DRIVER");
 
-        if (value_name.equals("firefox")) {
+        if (value_name != null && value_name.equals("firefox")) {
             driver = new FirefoxDriver();
         } else {
             driver = new ChromeDriver();
@@ -55,7 +55,6 @@ public class NewsRedirectTest {
         assertTrue(new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.urlMatches("https://news.mail.ru*")));
 
-        driver.quit();
     }
 
 

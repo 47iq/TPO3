@@ -4,10 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -35,7 +32,7 @@ public class HidePublicationTest {
   @BeforeAll
   public static void setup() {
     String value_name = System.getenv("DRIVER");
-    if (value_name.equals("firefox")) {
+    if (value_name != null && value_name.equals("firefox")) {
       WebDriverManager.firefoxdriver().setup();
     } else {
       WebDriverManager.chromedriver().setup();
@@ -46,7 +43,7 @@ public class HidePublicationTest {
   public void setUp() {
     String value_name = System.getenv("DRIVER");
 
-    if (value_name.equals("firefox")) {
+    if (value_name != null && value_name.equals("firefox")) {
       driver = new FirefoxDriver();
     } else {
       driver = new ChromeDriver();
@@ -54,6 +51,7 @@ public class HidePublicationTest {
 
     js = (JavascriptExecutor) driver;
     vars = new HashMap<String, Object>();
+    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(4));
   }
   @AfterEach
   public void tearDown() {
@@ -64,22 +62,25 @@ public class HidePublicationTest {
     driver.get("https://mail.ru/");
     driver.manage().window().setSize(new Dimension(1376, 1408));
     List<WebElement> tooltips = driver.findElements(By.xpath("//div[@role='presentation']"));
-    tooltips.get(0).click();
+    if (tooltips.size() > 0) {
+      tooltips.get(0).click();
+    }
 
-    new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("(//div[@class='pl_ag'])[1]/div/div/button")));
-    WebElement card = driver.findElement(By.xpath("(//div[@class='pl_ag'])[1]/div/div/button"));
+    //new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("(//div[@id='zen-row-0'])[1]/div/div/article/div/button")));
+    WebElement card = driver.findElement(By.xpath("(//div[@id='zen-row-0'])[1]/div/div/article/div/button"));
+    WebElement card1 = driver.findElement(By.xpath("(//div[@id='zen-row-0'])[1]/div/div/article"));
+    //WebElement card = driver.findElement(By.xpath("/html/body/main/div[2]/div[3]/div/div[5]/div/div[2]/div[1]/div/div/article/div[1]/button"));
 
-    card.click();
+    Actions actions = new Actions(driver);
+    actions.moveToElement(card1).moveToElement(card).click().perform();
 
-    new WebDriverWait(driver, Duration.ofSeconds(2))
-            .until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("(//div[@class='pl_ag'])[1]/div/div/div[4]/div/div[2]/button[1]")));
-
-    driver.findElement(By.xpath("(//div[@class='pl_ag'])[1]/div/div/div[4]/div/div[2]/button[1]")).click();
-    driver.findElement(By.xpath("(//div[@class='pl_ag'])[1]/div[1]/div"));
+    //card.click();
+    driver.findElement(By.xpath("//div[@class='feedback-card-state__feedbackList-1B']/button[1]")).click();
     new WebDriverWait(driver, Duration.ofSeconds(2))
             .until(ExpectedConditions.numberOfElementsToBe(
-                    By.xpath("(//div[@class='pl_ag'])[1]/div[1]/div/a"), 0));
-    assertThat(driver.findElement(By.xpath("(//div[@class='pl_ag'])[1]/div[1]/div")).getText(), is("Эта публикация больше не\nпоявится в вашей ленте"));
+                    By.xpath("//div[@class='feedback-card-state__feedbackList-1B']/button[1]"), 0));
+
+    Assertions.assertEquals("Эта публикация больше не появится в вашей ленте",
+            driver.findElement(By.xpath("//div[@class='mail-card-feedback__feedback-1f']/div")).getText());
   }
 }

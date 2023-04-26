@@ -55,7 +55,11 @@ public class BlackWhiteTest {
     // Светлая тема
     driver.findElement(By.xpath("//label/div")).click();
 
-    Assertions.assertEquals(driver.findElement(By.xpath("/html/body")).getCssValue("background-color"), "rgba(255, 255, 255, 1)");
+    if (driver instanceof ChromeDriver) {
+      Assertions.assertEquals(driver.findElement(By.xpath("/html/body")).getCssValue("background-color"), "rgba(255, 255, 255, 1)");
+    } else {
+      Assertions.assertEquals(driver.findElement(By.xpath("/html/body")).getCssValue("background-color"), "rgb(255, 255, 255)");
+    }
 
     // Настройка светлой/темной тем
     driver.findElement(By.xpath("//div[@id='ph-whiteline']/div/div[2]/div")).click();
@@ -63,6 +67,10 @@ public class BlackWhiteTest {
     // Темная тема
     driver.findElement(By.xpath("//div[@id='ph-whiteline']/div/div[2]/div[2]/div/div/ul/li[2]/label/div")).click();
 
-    Assertions.assertEquals(driver.findElement(By.xpath("/html/body")).getCssValue("background-color"), "rgba(25, 25, 26, 1)");
+    if (driver instanceof ChromeDriver) {
+      Assertions.assertEquals(driver.findElement(By.xpath("/html/body")).getCssValue("background-color"), "rgba(25, 25, 26, 1)");
+    } else {
+      Assertions.assertEquals(driver.findElement(By.xpath("/html/body")).getCssValue("background-color"), "rgb(25, 25, 26)");
+    }
   }
 }
